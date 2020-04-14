@@ -63,11 +63,12 @@ void stopThreadedIO(void) {
 
 1. When a client is readable, its read handler **readQueryFromClient** adds this client to **server.clients_pending_read**, flags the client with **CLIENT_PENDING_READ**.
 
-2. All read events handled in **afterSleep** after each event loop(after **epoll_wait** returns) uniformly, it calls **handleClientsWithPendingReadsUsingThreads** to distribute the read ready client to Thread IOs using Round-Robin algorithm, Thread IOs call **readQueryFromClient** to reads the client request, parses query.
+2. All read events handled in **afterSleep** after each event loop(after **epoll_wait** returns) uniformly, it calls **handleClientsWithPendingReadsUsingThreads** to distribute the read ready clients to Thread IOs using Round-Robin algorithm, Thread IOs call **readQueryFromClient** to reads the client request, parses query.
 
-3. The main busy waits all Thread IOs finish network read, query parsing work, and then execute the all query command uniformly.
+3. The main busy waits all Thread IOs to finish their network read, query parsing work, and then execute the all query command uniformly.
 ![Thread IO](./Images/thread-io.png)
-  
+
+---
 
 1. When replying to a client, store the data to the client reply buffer, flag the client with **CLIENT_PENDING_WRITE**, and add the client to **server.clients_pending_write**
 
