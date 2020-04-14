@@ -1,6 +1,6 @@
 # Thread IO
 
-Thread IO used to perform async IO operation when a listened fd is readable.
+Thread IO used to perform Network IO operation and parse query when a listened fd is readable.
 
 The server can run/stop the thread IO when necessary.
 
@@ -61,10 +61,12 @@ void stopThreadedIO(void) {
 }
 ```
 
-1. When a client is readable, **readQueryFromClient** handles the readable fd, flags the client with **CLIENT_PENDING_READ**  and puts the client to **server.clients_pending_read**.
+1. When a client is readable, its read handler **readQueryFromClient** adds this client to **server.clients_pending_read**, flags the client with **CLIENT_PENDING_READ**.
 
-2. All read events handled in **afterSleep** after each event loop(after **epoll_wait** returns) uniformly, it calls **handleClientsWithPendingReadsUsingThreads** which handles the readable events by Thread IO, reads the client request, processes command and responds to clients.
+2. All read events handled in **afterSleep** after each event loop(after **epoll_wait** returns) uniformly, it calls **handleClientsWithPendingReadsUsingThreads** to distribute the read ready client to Thread IOs using Round-Robin algorithm, Thread IOs call **readQueryFromClient** to reads the client request, parses query.
 
+3. The main busy waits all Thread IOs finish network read, query parsing work, and then execute the all query command uniformly.
+![Thread IO](./Images/thread-io.png)
   
 
 1. When replying to a client, store the data to the client reply buffer, flag the client with **CLIENT_PENDING_WRITE**, and add the client to **server.clients_pending_write**
