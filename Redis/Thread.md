@@ -66,7 +66,7 @@ void stopThreadedIO(void) {
 2. All read events handled in **afterSleep** after each event loop(after **epoll_wait** returns) uniformly, it calls **handleClientsWithPendingReadsUsingThreads** to distribute the read ready clients to Thread IOs using Round-Robin algorithm, Thread IOs call **readQueryFromClient** to reads the client request, parses query.
 
 3. The main busy waits all Thread IOs to finish their network read, query parsing work, and then execute the all query command uniformly.
-![Thread IO](./Images/thread-io.png)
+    ![Thread IO](./Images/thread-io.png)
 
 ---
 
