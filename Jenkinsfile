@@ -14,7 +14,7 @@ pipeline {
     }
     post {
         always {
-            echo 'This will always run 006'
+            echo 'This will always run 007'
         }
         success {
             echo 'This will run only if successful'
