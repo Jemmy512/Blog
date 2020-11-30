@@ -7,8 +7,23 @@ pipeline {
             }
         }
         stage('Test') {
-            steps {
-                sh 'echo "Fail!"; exit 0'
+            parallel {
+                stage('Test On Windows') {
+                    agent {
+                        label "Windows"
+                    }
+                    steps {
+                        echo 'This is a parallel test on Windows'
+                    }
+                }
+                stage('Test On MacOS') {
+                    agent {
+                        label "MacOS"
+                    }
+                    steps {
+                        echo 'is a parallel test on MacOS'
+                    }
+                }
             }
         }
     }
