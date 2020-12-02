@@ -8,20 +8,32 @@ pipeline {
         }
         stage('Test') {
             parallel {
-                stage('Test On Windows') {
+                stage('Windows Test') {
                     agent {
                         label "Windows"
                     }
                     steps {
                         echo 'This is a parallel test on Windows'
+                        try {
+                            echo 'This a parallel test on MacOS'
+                            setStatus(state: 'success', description: 'Windows Test')
+                        } catch (Exception e) {
+                            setStatus(state: 'failure', description: 'Windows Test')
+                        }
                     }
                 }
-                stage('Test On MacOS') {
+                stage('MacOS Test') {
                     agent {
                         label "MacOS"
                     }
                     steps {
-                        echo 'is a parallel test on MacOS'
+                        echo 'This a parallel test on MacOS'
+                        try {
+                            echo 'This a parallel test on MacOS'
+                            setStatus(state: 'success', description: 'MacOS Test')
+                        } catch (Exception e) {
+                            setStatus(state: 'failure', description: 'MacOS Test')
+                        }
                     }
                 }
             }
@@ -43,6 +55,62 @@ pipeline {
         changed {
             echo 'This will run only if the state of the Pipeline has changed'
             echo 'For example, if the Pipeline was previously failing but is now successful'
+        }
+    }
+}
+
+def setStatus(args = [:]) {
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: args.credentialsId ?: GITHUB_API_CREDENTIALS, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
+        try {
+            def state
+            if (args.state) {
+                state = args.state
+            } else if (currentBuild.currentResult == 'SUCCESS') {
+                state = 'success'
+            } else if (currentBuild.currentResult == 'UNSTABLE') {
+                state = 'failure'
+            } else if (currentBuild.currentResult == 'FAILURE') {
+                state = 'error'
+            }
+
+            def targetUrl = args.targetUrl ?: "${env.BUILD_URL}display/redirect"
+            def context = args.context ?: 'continuous-integration/jenkins'
+            def description = args.description
+            def sha = args.commit ?: env.GIT_COMMIT_FULL
+            def postPayload = JsonOutput.toJson([
+                state: state,
+                target_url: targetUrl,
+                description: description,
+                context: context
+            ])
+
+            def postUrl = (args.repoApiUrl ?: env.GITHUB_API_URL) + "statuses/$sha"
+            httpRequest(url: postUrl,
+                    requestBody: postPayload,
+                    httpMode: 'POST',
+                    contentType: 'APPLICATION_JSON',
+                    customHeaders: [[name: 'Authorization', value: "token $GIT_PASSWORD", maskValue: true]],
+                    validResponseCodes: '200:299',
+                    consoleLogResponseBody: true)
+        } catch (e) {
+            echo "$e"
+        }
+
+        // If prLabel is passed in, add that as a label to the PR
+        if (args.prLabel) {
+            try {
+                def postUrl = (args.repoApiUrl ?: env.GITHUB_API_URL) + "issues/$CHANGE_ID/labels"
+
+                httpRequest(url: postUrl,
+                        requestBody: JsonOutput.toJson([labels: [args.prLabel]]),
+                        httpMode: 'POST',
+                        contentType: 'APPLICATION_JSON',
+                        customHeaders: [[name: 'Authorization', value: "token $GIT_PASSWORD", maskValue: true]],
+                        validResponseCodes: '200:299',
+                        consoleLogResponseBody: true)
+            } catch (e) {
+                echo "$e"
+            }
         }
     }
 }
