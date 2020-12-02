@@ -13,12 +13,14 @@ pipeline {
                         label "Windows"
                     }
                     steps {
-                        echo 'This is a parallel test on Windows'
-                        try {
-                            echo 'This a parallel test on MacOS'
-                            setStatus(state: 'success', description: 'Windows Test')
-                        } catch (Exception e) {
-                            setStatus(state: 'failure', description: 'Windows Test')
+                        step {
+                            echo 'This is a parallel test on Windows'
+                            try {
+                                echo 'This a parallel test on MacOS'
+                                setStatus(state: 'success', description: 'Windows Test')
+                            } catch (Exception e) {
+                                setStatus(state: 'failure', description: 'Windows Test')
+                            }
                         }
                     }
                 }
@@ -27,12 +29,14 @@ pipeline {
                         label "MacOS"
                     }
                     steps {
-                        echo 'This a parallel test on MacOS'
-                        try {
+                        step {
                             echo 'This a parallel test on MacOS'
-                            setStatus(state: 'success', description: 'MacOS Test')
-                        } catch (Exception e) {
-                            setStatus(state: 'failure', description: 'MacOS Test')
+                            try {
+                                echo 'This a parallel test on MacOS'
+                                setStatus(state: 'success', description: 'MacOS Test')
+                            } catch (Exception e) {
+                                setStatus(state: 'failure', description: 'MacOS Test')
+                            }
                         }
                     }
                 }
