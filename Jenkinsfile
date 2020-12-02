@@ -78,14 +78,14 @@ def setStatus(args = [:]) {
             }
 
             def targetUrl = args.targetUrl ?: "${env.BUILD_URL}display/redirect"
-            def context = args.context ?: 'continuous-integration/jenkins'
+            // def context = args.context ?: 'continuous-integration/jenkins'
             def description = args.description
             def sha = args.commit ?: env.GIT_COMMIT_FULL
             def postPayload = JsonOutput.toJson([
                 state: state,
                 target_url: targetUrl,
-                description: description,
-                context: context
+                description: description
+                // context: context
             ])
 
             def postUrl = (args.repoApiUrl ?: env.GITHUB_API_URL) + "statuses/$sha"
