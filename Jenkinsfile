@@ -64,7 +64,7 @@ pipeline {
 }
 
 def setStatus(args = [:]) {
-    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: args.credentialsId ?: GITHUB_API_CREDENTIALS, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: args.credentialsId , usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
         try {
             def state
             if (args.state) {
