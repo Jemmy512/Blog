@@ -17,9 +17,9 @@ pipeline {
                             echo 'This is a parallel test on Windows'
                             try {
                                 echo 'This a parallel test on MacOS'
-                                setStatus(state: 'success', description: 'Windows Test')
+                                setStatus(credentialsId: '512ad648-5bbc-4260-90d7-85805a8d6708', state: 'success', description: 'Windows Test')
                             } catch (Exception e) {
-                                setStatus(state: 'failure', description: 'Windows Test')
+                                setStatus(credentialsId: '512ad648-5bbc-4260-90d7-85805a8d6708', state: 'failure', description: 'Windows Test')
                             }
                         }
                     }
