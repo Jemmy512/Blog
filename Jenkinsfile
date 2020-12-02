@@ -13,7 +13,7 @@ pipeline {
                         label "Windows"
                     }
                     steps {
-                        step {
+                        script {
                             echo 'This is a parallel test on Windows'
                             try {
                                 echo 'This a parallel test on MacOS'
@@ -29,7 +29,7 @@ pipeline {
                         label "MacOS"
                     }
                     steps {
-                        step {
+                        script {
                             echo 'This a parallel test on MacOS'
                             try {
                                 echo 'This a parallel test on MacOS'
