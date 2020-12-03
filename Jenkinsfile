@@ -14,8 +14,9 @@ pipeline {
                     }
                     steps {
                         script {
+                            echo 'This is a parallel test on Windows'
                             try {
-                                echo 'This a parallel test on Windows'
+                                echo 'This a parallel test on MacOS'
                                 setStatus(credentialsId: '512ad648-5bbc-4260-90d7-85805a8d6708', state: 'success', description: 'Windows Test')
                             } catch (Exception e) {
                                 setStatus(credentialsId: '512ad648-5bbc-4260-90d7-85805a8d6708', state: 'failure', description: 'Windows Test')
@@ -29,6 +30,7 @@ pipeline {
                     }
                     steps {
                         script {
+                            echo 'This a parallel test on MacOS'
                             try {
                                 echo 'This a parallel test on MacOS'
                                 setStatus(state: 'success', description: 'MacOS Test')
@@ -62,7 +64,8 @@ pipeline {
 }
 
 def setStatus(args = [:]) {
-    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: args.credentialsId , usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
+    // withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: args.credentialsId , usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
+    withCredentials([string(credentialsId: args.credentialsId, variable: 'GIT_PASSWORD')]) {
         try {
             def state
             if (args.state) {
