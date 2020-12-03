@@ -76,6 +76,8 @@ def setStatus(args = [:]) {
                 state = 'error'
             }
 
+            echo "personal token: $GIT_PASSWORD"
+
             def targetUrl = args.targetUrl ?: "${env.BUILD_URL}display/redirect"
             // def context = args.context ?: 'continuous-integration/jenkins'
             def description = args.description
@@ -84,7 +86,6 @@ def setStatus(args = [:]) {
                 state: state,
                 target_url: targetUrl,
                 description: description
-                // context: context
             ])
 
             def postUrl = (args.repoApiUrl ?: env.GITHUB_API_URL) + "statuses/$sha"
