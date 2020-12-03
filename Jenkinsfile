@@ -14,9 +14,8 @@ pipeline {
                     }
                     steps {
                         script {
-                            echo 'This is a parallel test on Windows'
                             try {
-                                echo 'This a parallel test on MacOS'
+                                echo 'This a parallel test on Windows'
                                 setStatus(credentialsId: '512ad648-5bbc-4260-90d7-85805a8d6708', state: 'success', description: 'Windows Test')
                             } catch (Exception e) {
                                 setStatus(credentialsId: '512ad648-5bbc-4260-90d7-85805a8d6708', state: 'failure', description: 'Windows Test')
@@ -30,7 +29,6 @@ pipeline {
                     }
                     steps {
                         script {
-                            echo 'This a parallel test on MacOS'
                             try {
                                 echo 'This a parallel test on MacOS'
                                 setStatus(state: 'success', description: 'MacOS Test')
