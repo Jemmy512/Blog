@@ -76,12 +76,15 @@ def setStatus(args = [:]) {
                 state = 'error'
             }
 
-            echo "personal token: $GIT_PASSWORD"
-
             def targetUrl = args.targetUrl ?: "${env.BUILD_URL}display/redirect"
             // def context = args.context ?: 'continuous-integration/jenkins'
             def description = args.description
             def sha = args.commit ?: env.GIT_COMMIT_FULL
+
+            echo "state: $state"
+            echo "target_url: $targetUrl"
+            echo "description: $description"
+
             def postPayload = JsonOutput.toJson([
                 state: state,
                 target_url: targetUrl,
